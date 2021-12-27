@@ -7,6 +7,7 @@ public class Searchpage {
 		
 		System.out.println("searchpage");
 		
+		System.out.println("searchpage updated");
 
 	}
 
