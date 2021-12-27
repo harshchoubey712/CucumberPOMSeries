@@ -1,0 +1,7 @@
+-------------------------------------------------------------------------------
+Test set: testrunners.MyTestRunner
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 71.362 s <<< FAILURE! - in testrunners.MyTestRunner
+null on testrunners.MyTestRunner(testrunners.MyTestRunner)  Time elapsed: 66.302 s  <<< FAILURE!
+java.lang.NoSuchMethodError: 'org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject.createFromByteArray(org.apache.pdfbox.pdmodel.PDDocument, byte[], java.lang.String)'
+
