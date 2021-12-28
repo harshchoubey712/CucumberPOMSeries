@@ -6,82 +6,139 @@ public class Project_flow {
 
 	
 	/*
-	 * first we create login feature file then execute it which will enerate the stepdefinition.
-	 * we will copy them in step definitinition file Loginpagesteps.
+	 * first we create login feature file then execute it which will generate the stepdefinition.
+	 * we will copy them in step definitinition file Loginpagesteps.java.
 	 * 
 ======================
 Loginpage.feature
+ * create this feature file under src/test/resources folder,  AppFeatures folder, Loginpage.feature.
 
 
-	 * Feature: Login page feature
+Feature: Login page feature
 
 Scenario: Login page title
 Given user is on login page
 When user gets the title of the page
 Then page title should be "Login - My Store"
 
-======================
+Scenario: Forgot Password link
+Given user is on login page
+Then forgot your password link should be displayed
+
+Scenario: Login with correct credentials
+Given user is on login page
+When user enters username "dec2020secondbatch@gmail.com"
+And user enters password "Selenium@12345"
+And user clicks on Login button
+Then user gets the title of the page
+And page title should be "My account - My Store"
 
 
-	
 	
 ============================
 driverfactory.java 
+create this under src/main/java folder, com.qa.factory package, driverfactory.java .
 
-	 * Then create driverfactory.java 
-	 * * This method is used to initialize the thradlocal driver on the basis of given
-	 * browser
+This method is used to initialize the thradlocal driver on the basis of given browser.
+Threadlocal is for running in parallel mode.
+As threadlocal is initialized with webdriver it will return the webdriver .(line 47 to 49).
+It has 2 methods set and get.
+Get will return the webdriver.
+Return getdriver() will give the current instance of webdriver like chrome or firefox.
+
+If 3 threads are running parallel they will be in sync using synchronized(line 62).
 	 * 
-	 * public WebDriver init_driver(String browser) {
+	public WebDriver driver;
+
+	public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+	public WebDriver init_driver(String browser) {
 
 		System.out.println("browser value is: " + browser);
 
 		if (browser.equals("chrome")) {
 			WebDriverManager.chromedriver().setup();
 			tlDriver.set(new ChromeDriver());
+		} else if (browser.equals("firefox")) {
+			WebDriverManager.firefoxdriver().setup();
+			tlDriver.set(new FirefoxDriver());
+		} else if (browser.equals("safari")) {
+			tlDriver.set(new SafariDriver());
+		} else {
+			System.out.println("Please pass the correct browser value: " + browser);
+		}
+
+		getDriver().manage().deleteAllCookies();
+		getDriver().manage().window().maximize();
+		return getDriver();
+		
+		
+	public static synchronized WebDriver getDriver() {
+	    return tlDriver.get();
+		
 			
 =============================
-			
-ApplicationHooks.java
+create this under src/test/java folder, Apphooks package, ApplicationHooks.java
 
-	 * Then we use ApplicationHooks.java
-	 * 
-	 * Hooks will run before each scenario. order=0 will run 1st in @before. 
-	 order=1 will run 1st in @after.
-	 
-	 so as per hooks before running each scenario, order=0 hook will initilalize prop file and order=1 hook will
-	 launch the new driver using driverfactory class object as below.
-	 
-	 @Before(order = 0)
-	 	public void getProperty() {
+package AppHooks;
+
+import java.util.Properties;
+
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+
+import com.qa.factory.DriverFactory;
+import com.qa.Util.ConfigReader;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+
+public class ApplicationHooks {
+
+	private DriverFactory driverFactory;
+	private WebDriver driver;
+	private ConfigReader configReader;
+	Properties prop;
+
+	@Before(order = 0)
+	
+	public void getProperty() {
 		configReader = new ConfigReader();
 		prop = configReader.init_prop();
-		
-		
-	 
+	}
+
+
 	@Before(order = 1)
 	public void launchBrowser() {
 		String browserName = prop.getProperty("browser");
 		driverFactory = new DriverFactory();
 		driver = driverFactory.init_driver(browserName);
-	 
-	 after running each sceanrion , order=1 hook  will run 1st which checks if any sceanrio is failed and if yes it will
-	 attach failed screenshot the same scenario.
-	 
-	 after that order=0 hook will run which will quit  the browser.
-	 
-	 @After(order = 1)
-	public void tearDown(Scenario scenario) {
-		if (scenario.isFailed()) {
-		String screenshotName = scenario.getName().replaceAll(" ", "_");
-		byte[] sourcePath = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-			scenario.attach(sourcePath, "image/png", screenshotName);
-	
-		@After(order = 0)
+
+		
+	}
+
+	@After(order = 0)
 	public void quitBrowser() {
 		driver.quit();
 	}
+
 	
+	@After(order = 1)
+	public void tearDown(Scenario scenario) {
+		if (scenario.isFailed()) {
+			// take screenshot:
+			String screenshotName = scenario.getName().replaceAll(" ", "_");
+			
+   
+		byte[] sourcePath = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+		scenario.attach(sourcePath, "image/png", screenshotName);
+
+		}
+	}
+
+}
+
 ===============================
 LoginPage.java page class
 
