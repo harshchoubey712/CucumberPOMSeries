@@ -8,7 +8,7 @@ public class Project_flow {
 	/*
 	 * first we create login feature file then execute it which will generate the stepdefinition.
 	 * we will copy them in step definitinition file Loginpagesteps.java.
-	 * 
+	 */
 ======================
 Loginpage.feature
  * create this feature file under src/test/resources folder,  AppFeatures folder, Loginpage.feature.
@@ -37,6 +37,7 @@ And page title should be "My account - My Store"
 	
 ============================
 driverfactory.java 
+/*
 create this under src/main/java folder, com.qa.factory package, driverfactory.java .
 
 This method is used to initialize the thradlocal driver on the basis of given browser.
@@ -47,7 +48,8 @@ Get will return the webdriver.
 Return getdriver() will give the current instance of webdriver like chrome or firefox.
 
 If 3 threads are running parallel they will be in sync using synchronized(line 62).
-	 * 
+*/
+	
 	public WebDriver driver;
 
 	public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
@@ -77,8 +79,66 @@ If 3 threads are running parallel they will be in sync using synchronized(line 6
 		
 			
 =============================
-create this under src/test/java folder, Apphooks package, ApplicationHooks.java
+* create this under src/test/java folder, Apphooks package, ApplicationHooks.java
+	
+This hooks will use below files: from different folders.
+	
+1: ConfigReader.java for @Before(order = 0) hook.
+	
+	ConfigReader.java
+	ConfigReader.java under com.qa.Util package inside src/main/java folder.
+		
+		
+	public class ConfigReader 
+	{
+       
+	private Properties prop;
 
+	/*
+	 * This method is used to load the properties from config.properties file
+	 * @return it returns Properties prop object.
+	 prop.load(ip) wher ip pointing to cucumber.properties file which holds browser=chrome.
+	 so prop is pointing to chrome browser.
+	 */
+	public Properties init_prop() 
+	 {
+
+		prop = new Properties();
+		try {
+			FileInputStream ip = new FileInputStream("./src/test/resources/config/cucumber.properties");
+			prop.load(ip);
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return prop;
+
+	}
+
+      }
+		
+2: driverfactory.java for @Before(order = 1) hook.
+create this under src/main/java folder, com.qa.factory package, driverfactory.java .
+		
+	public WebDriver driver;
+
+	public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+	public WebDriver init_driver(String browser) {
+
+		System.out.println("browser value is: " + browser);
+
+		if (browser.equals("chrome")) {
+			WebDriverManager.chromedriver().setup();
+			tlDriver.set(new ChromeDriver());
+		} else if (browser.equals("firefox")) {
+			WebDriverManager.firefoxdriver().setup();
+			tlDriver.set(new FirefoxDriver());
+			
+			
+			
 package AppHooks;
 
 import java.util.Properties;
@@ -100,7 +160,35 @@ public class ApplicationHooks {
 	private WebDriver driver;
 	private ConfigReader configReader;
 	Properties prop;
+	
+	
 
+	
+	/*
+	 Hooks will run before each scenario. @Before(order = 0) will run 1st in before hook. This uses ConfigReader.java defined above.
+	 
+	 @After(order = 1) will run 1st in after hook.
+	 
+	 So as per hooks before running each scenario, @Before(order = 0) hook will initilalize prop file . so prop will point to browser=chrome.
+	 
+	 and @Before(order = 1) hook will 1st get the value of browser using prop.getProperty("browser") and then launch the new driver using 
+	 driverFactory.init_driver(browserName);
+	 
+	 
+	 After running each sceanrion , @After(order = 1) hook  will run 1st which checks if any sceanrio is failed and if yes it will
+	 attach failed screenshot the same scenario.
+	 
+	 After that @After(order = 0)hook will run which will quit  the browser.
+	 
+	 In @After(order = 1)  hook:
+	 teardown method will run if any sceanrio gets failed.
+         Sourcepath will take a screenshot.
+
+         Scenario.attach will then attach the screenshot of the failed step to the scenario inside the cucumber report.
+	
+	 
+	 */
+	
 	@Before(order = 0)
 	
 	public void getProperty() {
@@ -108,6 +196,7 @@ public class ApplicationHooks {
 		prop = configReader.init_prop();
 	}
 
+	
 
 	@Before(order = 1)
 	public void launchBrowser() {
@@ -140,7 +229,7 @@ public class ApplicationHooks {
 }
 
 ===============================
-LoginPage.java page class
+LoginPage.java page class inside src/main/java, com.pages package.
 
 public class LoginPage {
 
@@ -188,41 +277,20 @@ public class LoginPage {
 	}
 	
 
-
-Created loginpage class object inside stepdefinitions LoginPageSteps and then call page class methods.
-
-so feature file will 1st trigger .
-
-Scenario: Login with correct credentials
-Given user is on login page
-When user enters username "dec2020secondbatch@gmail.com"
-And user enters password "Selenium@12345"
-And user clicks on Login button
-Then user gets the title of the page
-And page title should be "My account - My Store"
-
-
-Then it will call step def and from there page class methods are called. 
-
-private LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
-title = loginPage.getLoginPageTitle();
-
-Page class will use the values passed from
-feature file.
-
 ========================
 	
-LoginPageSteps.java
-All assertions has to be done in test class inside stepdefinitoons not in the main class.
-
+LoginPageSteps.java under src/test/java , stepdefinitions package.
+	
+/*
+	 * Created loginpage class object and then call its methods like getLoginPageTitle, isForgotPwdLinkExist.
+	 * All assertions has to be done in test class inside stepdefinitoons not in the main class.
+*/
 
 public class LoginPageSteps {
 
 	private static String title;
 	private LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
-	/*
-	 * Created loginpage class object and then call its methods like getLoginPageTitle, isForgotPwdLinkExist.
-	 * All assertions has to be done in test class inside stepdefinitoons not in the main class.
+	
 
 	
 
@@ -306,9 +374,11 @@ public class LoginPage {
 
 	private By forgotPwdLink = By.linkText("Forgot your password?111");
 
-This hook will execute 1st with order=1
+@After(order = 1) hook will execute after running each scenario.
 
-Which says that if scenario is getting failed then take a screenshot.
+@After(order = 1) hook  will check if any sceanrio is failed and if yes it will
+attach failed screenshot the same scenario.
+	 
 
 this will fail the Forgot password scenario and screenshot will be taken.
 
@@ -361,102 +431,49 @@ Here also we are using datatable concept using user gets account section details
 run the feature file using run configuation that will generate step definitions.
 
 ==========================
+Create loginpage class object.
+import io.cucumber.datatable.DataTable; for datatable.
+Use .asMaps which will return list<Map>. ((List<Map<String, String>> credList = credTable.asMaps();))
 
-public class AccountsPageSteps {
+Index 0 will give us 1st map.  (( String userName = credList.get(0).get("username");))
+We need to get the value of key username,password from feature file.
 
-	private LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
-   * Create loginpage class object.
-	private AccountsPage accountsPage;
-
-	@Given("user has already logged in to application")
-	public void user_has_already_logged_in_to_application(DataTable credTable) {
-		
-   * import io.cucumber.datatable.DataTable; for datatable.
-
-	 List<Map<String, String>> credList = credTable.asMaps();
-	 
-   *  Use .asMaps which will return list<Map>.
-	 
-	 String userName = credList.get(0).get("username");
-	 
-	 String password = credList.get(0).get("password");
-
-   * Index 0 will give us 1st map.
-   * We need to get the value of key username,password from feature file.
-
-   * Map will be created like username as key, password as key and their corresponding values below.
-   * So credlist.get(0) will give 1st map and from there we are taking key as username.
-   * 
-   * accountspage.feature.
-   * Background:
-   * Given user has already logged in to application
-   * |username|password|
-   * |dec2020secondbatch@gmail.com|Selenium@12345|
-
-   * 
-   * In loginpage.java class, we are creating 1 dologin() method to do login.
-
-   *    public AccountsPage doLogin(String un, String pwd) {
-   *	System.out.println("login with: " + un + " and " + pwd);
-   *		driver.findElement(emailId).sendKeys(un);
-   *		driver.findElement(password).sendKeys(pwd);
-   *		driver.findElement(signInButton).click();
-   *		return new AccountsPage(driver);
-
-
-   * After login in the loginpage with username, password we reaches to the accountpage so above method dologin should
-   * Return accountpage class object.
-   * 
-   * 
-   * In same class AccountsPageSteps.java create below Loginpageclass object.
-   * 	private LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
-   *    Create loginpage class object.
-		
- 
-
-		DriverFactory.getDriver()
-				.get("http://automationpractice.com/index.php?controller=authentication&back=my-account");
-		accountsPage = loginPage.doLogin(userName, password);
-/*
- *   Above username, password is coming from accountspage feature file in the form of datatable credtable.
- *   So now we have used accountpage referenece and saved details of loginpage as loginpage succesful login will return accountpage.
- 
- * accountspage.feature.
- * Background:
- * Given user has already logged in to application
- * |username|password|
- * |dec2020secondbatch@gmail.com|Selenium@12345|
-
-	}
-
-	@Given("user is on Accounts page")
-	public void user_is_on_accounts_page() {
-		String title = accountsPage.getAccountsPageTitle();
- *   Calling accountpagetitle method after hitting the url and loginpage is done using username,password.
-		System.out.println("Accounts Page title is: " + title);
-	}
-
-	@Then("user gets accounts section")
-	public void user_gets_accounts_section(DataTable sectionsTable) {
-
-		List<String> expAccountSectionsList = sectionsTable.asList();
+Map will be created like username as key, password as key and their corresponding values below.
+So credlist.get(0) will give 1st map and from there we are taking key as username.
 	
-		/*
-		 We will get above data table in the form of list from feature file.
-		 |ORDER HISTORY AND DETAILS|
-|MY CREDIT SLIPS|
-|MY ADDRESSES|
-|MY PERSONAL INFORMATION|
-|MY WISHLISTS|
-|Home|
-		 
-		
-		System.out.println("Expected accounts section list: " + expAccountSectionsList);
+In login page class we are creating 1 dologin() method to do login as per below.
 
-		List<String> actualAccountSectionsList = accountsPage.getAccountsSectionsList();
-		/*
-		 * above will return the actual account list.
-		 * 
+public AccountsPage doLogin(String un, String pwd) {
+		System.out.println("login with: " + un + " and " + pwd);
+		driver.findElement(emailId).sendKeys(un);
+		driver.findElement(password).sendKeys(pwd);
+		driver.findElement(signInButton).click();
+		return new AccountsPage(driver);
+	
+After login in the loginpage with useranme, password we reaches to the accountpage so above method dologin should
+Return accountpage class object.
+	
+This username, password is coming from feature file in the form of datatable credtable.  ((accountsPage = loginPage.doLogin(userName, password);)).
+	
+So now we have used accountpage referenece and saved details of loginpage as loginpage succesful login will return accountpage.	
+	
+(( @Then("user gets accounts section")
+  public void user_gets_accounts_section(DataTable sectionsTable) {
+  List<String> expAccountSectionsList = sectionsTable.asList();
+	
+))
+We will get above data table , sectionsTable in the form of list from feature file shown below. This will be our expected list.
+	 |ORDER HISTORY AND DETAILS|
+         |MY CREDIT SLIPS|
+         |MY ADDRESSES|
+         |MY PERSONAL INFORMATION|
+         |MY WISHLISTS|
+         |Home|
+((List<String> actualAccountSectionsList = accountsPage.getAccountsSectionsList();))
+ above will return the actual account list.
+ Below extract taken from accountpage.java
+	
+	
 		 * private By accountSections = By.cssSelector("div#center_column span");
 		 * public List<String> getAccountsSectionsList() {
 
@@ -470,6 +487,47 @@ public class AccountsPageSteps {
 		}
 
 		return accountsList;
+		 */
+		/*
+		
+		
+public class AccountsPageSteps {
+
+	private LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
+
+	private AccountsPage accountsPage;
+
+	@Given("user has already logged in to application")
+	public void user_has_already_logged_in_to_application(DataTable credTable) {
+		
+	 List<Map<String, String>> credList = credTable.asMaps();
+	 
+
+	 String userName = credList.get(0).get("username");
+	 
+	 String password = credList.get(0).get("password");
+
+         DriverFactory.getDriver()
+				.get("http://automationpractice.com/index.php?controller=authentication&back=my-account");
+	 accountsPage = loginPage.doLogin(userName, password);
+	}
+
+	@Given("user is on Accounts page")
+	public void user_is_on_accounts_page() {
+		String title = accountsPage.getAccountsPageTitle();
+
+	}
+
+	@Then("user gets accounts section")
+	public void user_gets_accounts_section(DataTable sectionsTable) {
+
+		List<String> expAccountSectionsList = sectionsTable.asList();
+	
+		System.out.println("Expected accounts section list: " + expAccountSectionsList);
+
+		List<String> actualAccountSectionsList = accountsPage.getAccountsSectionsList();
+		
+	
 		 
 		System.out.println("Actual accounts section list: " + actualAccountSectionsList);
 
