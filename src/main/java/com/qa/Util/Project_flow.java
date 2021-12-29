@@ -1037,7 +1037,191 @@ https://docs.joyent.com/public-cloud/getting-started/ssh-keys/generating-an-ssh-
        Again pushing to see changes.
        
       ==========================
+      Pull request
       
+      1st Naveen pushes his code to the master branch.
+
+      Then other team members joined like Sandesh, Babita…
+
+      They will 1st clone the code ur l of master to their local.
+      Say Sandesh start working on homepage.
+
+      Babita on landingpage.
+
+      After this they will push the code to the new branch says sandesh.
+      For this they will raise pull request and mention the reviewer details as Naveen.
+
+
+      Naveen will then take this sandesh branch to local eclipse, review 
+      and if any changes required
+      Will notify sandesh again. 
+
+      Sandesh again raises pull request with new changes and if all ok
+      Naveen will aproove the pull request.
+
+      Then sandesh branch will merge to master branch.
+
+      
+      Likewise babita and prashant will push their changes the new b and p branches and raise pull request.
+
+      If they are approved then it will merge to master branch.
+
+      This master branch will be pushed to production.
+
+      Reviewer has to review all logic high  level.
+
+      This is pull request.
+      
+      If any new people joins like sarang they will take the code from 
+      master branch which has the latest stable code.
+      
+      Say Sarang working on ust us3001 then he will create  anew branch with this name and raise pull request.
+
+      He can raise pull request daily say for 5 days for above branch. 
+
+      Then Naveen has to checkout this branch daily and compile the code and check for logic. If all ok then he will approve and the branch will merge to master.
+
+      Naveen can also go to github directly and review the changes in us003 branch and merges to master but 1st approch is better.
+
+      
+      Once dev team all changes are there in master branch they 
+      can push it to QA team for testing .
+
+      Then same changes can be used for production also.
+      
+      If there are 10 bugs it would be assigned to different dev team members.
+
+      Dev team will again raise pr for each bug and once its reviewed and approved will merge the bugs fixes to master branch.
+      So it will be deployed to QA team for testing then.
+
+      So QA team always works on master branch which has no bugs.
+
+      If there are any production bugs again dev team will raise PR and work on it . 
+      Merge  it back to Master branch.
+
+      Again Master will be pushed to QA. 
+      QA team will test it and then it will be pushed to production.
+
+      
+      Steps:
+    	  
+    	  1: Create a new branch in github.
+    	  2: So now there are 2 branches master and dealers.
+    	  3:  This new branch will have all the changes of master branch.
+    	  4: So we will create multiple branches like above from master branch and at last will 
+    	     merge all them to master .
+    	     So at last master branch will have all changes of other branches.
+      
+          5: As soon as we create a new branch it will have all changes from master branch.
+
+
+          6:Go to the project location. Marchpomseries.
+          Do git branch.
+          Currently its pointing to master branch.
+
+
+          
+          7: git pull origin dealspagebranch.
+
+             Then do git checkout dealspagebranch.
+             
+             
+             Now git branch poiting to dealspage branch.
+             
+           
+           8: Now do some changes in eclipse as above.
+           
+           
+           9:Now do git status which shows what files we have modified.
+
+
+           
+           10: Now do  git add as above.
+           
+           11:Again do git status which will show above file in green colour means it is ready to be committed.
+
+
+           
+           12:Do git commit which will push the changes from local to git.
+
+           13:Then do git push which will push from git to remote rep.
+
+              git push origin dealsbranch
+              
+              
+           14:Go to rep and refresh which will show the change in dealspage.java as above in the dealspagebranch.
+
+           
+           In master branch there is no chnages.
+
+           
+          15:  Now raise pull request as above.
+            
+          Write summary and comments of the changes made.
+
+
+          
+          Write reviewer details.
+
+
+          
+          Arrow pointing to master branch means after approval changes should merge to master branch.
+
+          
+          We are creating pull request from naveen to naveen only.
+
+          As there is only 1 person for review.
+
+
+          
+          Naveen will get a notification like above And details what naveen has added.
+
+
+          By clicking on + button reviewer can add a review comment as well.
+
+
+          
+          Reviewer can add multiple comments as above.
+
+          
+          Once review completed click on finish review.
+
+          
+          If request raised for some other approver then approve will be enabled.
+
+          Reviewer can then submit review.
+
+
+          So requestor will then get the notification of the changes has to be made.
+          He made changes to the eclipse and again raise PR.
+
+          
+          Requestor will do changes as per comments.
+          
+          Again do git add and commit
+          
+          git push origin dealsbranch
+          
+          Reviewer can review again. If all correct he can put comments as sayCorrect now.
+          And submit review.
+          
+          Then requestor notified that all correct and then he can do merge pull request.
+          
+          Confirm merge.
+          
+          Now master branch got all merged changes.
+
+          So we keep adding code to the dealspage branch and raise PR. After approvals  from reviewers, keep merging them to master branch.
+
+
+
+          =============
+          
+          
+          
+
+           
+
       
        
        
