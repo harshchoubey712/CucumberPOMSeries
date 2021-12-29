@@ -39,14 +39,12 @@ And page title should be "My account - My Store"
 driverfactory.java 
 /*
 create this under src/main/java folder, com.qa.factory package, driverfactory.java .
-
 This method is used to initialize the thradlocal driver on the basis of given browser.
 Threadlocal is for running in parallel mode.
 As threadlocal is initialized with webdriver it will return the webdriver .(line 47 to 49).
 It has 2 methods set and get.
 Get will return the webdriver.
 Return getdriver() will give the current instance of webdriver like chrome or firefox.
-
 If 3 threads are running parallel they will be in sync using synchronized(line 62).
 */
 	
@@ -183,7 +181,6 @@ public class ApplicationHooks {
 	 In @After(order = 1)  hook:
 	 teardown method will run if any sceanrio gets failed.
          Sourcepath will take a screenshot.
-
          Scenario.attach will then attach the screenshot of the failed step to the scenario inside the cucumber report.
 	
 	 
@@ -359,8 +356,9 @@ public class MyTestRunner {
 Now run the testrunner file as above.
 
 =====================
-
+/*
 we can now fail the test by changing the page locators.
+*/
 
 LoginPage.java page class
 
@@ -388,7 +386,9 @@ This shows the screenshot of the failed test along with error message.
 
 ===========================
 
-Now create  accountspage.feature.
+/*
+ * Now create  accountspage.feature.
+ */
 
 Feature: Account Page Feature
 
@@ -419,7 +419,7 @@ Then user gets accounts section
 |Home|
 And accounts section count should be 6
 
-
+/*
 
 We are using the concept of datatables in background .
 We are not using concept of examples using data driven.
@@ -429,8 +429,14 @@ Here also we are using datatable concept using user gets account section details
 11, 12th line is not flagged as we already have its definition.
 
 run the feature file using run configuation that will generate step definitions.
+*/
 
 ==========================
+
+/*
+ * Now create AccountsPageSteps.java. For that we need to use below classes with comments.
+ */
+
 Create loginpage class object.
 import io.cucumber.datatable.DataTable; for datatable.
 Use .asMaps which will return list<Map>. ((List<Map<String, String>> credList = credTable.asMaps();))
@@ -488,79 +494,66 @@ We will get above data table , sectionsTable in the form of list from feature fi
 
 		return accountsList;
 		 */
-		/*
 		
+=============================
+
+/*
+ * Now start  AccountsPageSteps.java. 
+ */
+
 		
 public class AccountsPageSteps {
-
 	private LoginPage loginPage = new LoginPage(DriverFactory.getDriver());
-
 	private AccountsPage accountsPage;
-
 	@Given("user has already logged in to application")
 	public void user_has_already_logged_in_to_application(DataTable credTable) {
 		
 	 List<Map<String, String>> credList = credTable.asMaps();
 	 
-
 	 String userName = credList.get(0).get("username");
 	 
 	 String password = credList.get(0).get("password");
-
          DriverFactory.getDriver()
 				.get("http://automationpractice.com/index.php?controller=authentication&back=my-account");
 	 accountsPage = loginPage.doLogin(userName, password);
 	}
-
 	@Given("user is on Accounts page")
 	public void user_is_on_accounts_page() {
 		String title = accountsPage.getAccountsPageTitle();
-
 	}
-
 	@Then("user gets accounts section")
 	public void user_gets_accounts_section(DataTable sectionsTable) {
-
 		List<String> expAccountSectionsList = sectionsTable.asList();
 	
 		System.out.println("Expected accounts section list: " + expAccountSectionsList);
-
 		List<String> actualAccountSectionsList = accountsPage.getAccountsSectionsList();
 		
 	
 		 
 		System.out.println("Actual accounts section list: " + actualAccountSectionsList);
-
 		Assert.assertTrue(expAccountSectionsList.containsAll(actualAccountSectionsList));
-
 	}
-
 	@Then("accounts section count should be {int}")
 	public void accounts_section_count_should_be(Integer expectedSectionCount) {
 		Assert.assertTrue(accountsPage.getAccountsSectionCount() == expectedSectionCount);
 	}
-
 }
-
 ===============================
+/*
+ * Now start  AccountsPage.java. 
+ */
+
+
 AccountsPage.java
-
-
 package com.pages;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
 public class AccountsPage {
-
 	private WebDriver driver;
-
 	private By accountSections = By.cssSelector("div#center_column span");
-
 	public AccountsPage(WebDriver driver) {
 		this.driver = driver;
 	}
@@ -568,80 +561,24 @@ public class AccountsPage {
 	public String getAccountsPageTitle() {
 		return driver.getTitle();
 	}
-
 	public int getAccountsSectionCount() {
 		return driver.findElements(accountSections).size();
 	}
-
 	public List<String> getAccountsSectionsList() {
-
 		List<String> accountsList = new ArrayList<>();
 		List<WebElement> accountsHeaderList = driver.findElements(accountSections);
-
 		for (WebElement e : accountsHeaderList) {
 			String text = e.getText();
 			System.out.println(text);
 			accountsList.add(text);
 		}
-
 		return accountsList;
-
 	}
-
 }
-=========================
 
-AccountsPage.java
-
-package com.pages;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
-public class AccountsPage {
-
-	private WebDriver driver;
-
-	private By accountSections = By.cssSelector("div#center_column span");
-
-	public AccountsPage(WebDriver driver) {
-		this.driver = driver;
-	}
-	
-	public String getAccountsPageTitle() {
-		return driver.getTitle();
-	}
-
-	public int getAccountsSectionCount() {
-		return driver.findElements(accountSections).size();
-	}
-
-	public List<String> getAccountsSectionsList() {
-
-		List<String> accountsList = new ArrayList<>();
-		List<WebElement> accountsHeaderList = driver.findElements(accountSections);
-
-		for (WebElement e : accountsHeaderList) {
-			String text = e.getText();
-			System.out.println(text);
-			accountsList.add(text);
-		}
-
-		return accountsList;
-
-	}
-
-}
 ==============================
-
 pom.xml
-
-* add extent dependency in pom.xml.
-
+/* add extent dependency in pom.xml */
 	<dependency>
 			<groupId>tech.grasshopper</groupId>
 			<artifactId>extentreports-cucumber6-adapter</artifactId>
@@ -650,17 +587,13 @@ pom.xml
 		</dependency>
 		
 ===============================
-
 extent.properties
-
-* add below properties file in src/test/resources
+//add below properties file in src/test/resources
 
 extent.reporter.spark.start=true
 extent.reporter.spark.out=test-output/SparkReport/Spark.html
 extent.reporter.spark.config=src/test/resources/extent-config.xml
-
 extent.reporter.spark.out=test-output/SparkReport/
-
 screenshot.dir=test-output/
 screenshot.rel.path=../
 extent.reporter.pdf.start=true
@@ -672,24 +605,19 @@ systeminfo.os=Mac
 systeminfo.user=Naveen
 systeminfo.build=1.1
 systeminfo.AppName=AutomationPractice
-
-
 ===================
-extent_config.xml
 
-<!--add below xml file in src/test/resources.-->
-<!--This file xml is basically used to show the format of extent report-->
-
-
+extent-config.xml
 
 <?xml version="1.0" encoding="UTF-8"?>
 <extentreports>
 	<configuration>
 		<!-- report theme -->
-
+/*This file xml is basically used to show the format of extent report-->
+<!-- Then we need to add extentcucumber adapter inside  testrunner.. 
 plugin = {"pretty",
 	      "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"
--->
+*/
 		<!-- standard, dark -->
 
 		<theme>dark</theme>
@@ -716,57 +644,39 @@ plugin = {"pretty",
 		<!-- custom javascript -->
 
 		<scripts>
-
-<![CDATA[
-$(document).ready(function() {
-});
-]]>
-		</scripts>
-		<!-- custom styles -->
-		<styles>
-<![CDATA[
-]]>
-		</styles>
-	</configuration>
-</extentreports>
-
+		
 ============================
 MyTestRunner.java
-
-<!-- Then we need to add extentcucumber adapter in testrunner..
-* Then run this testrunner as junit which will generate extent spark html reports under SparkReport
+<!-- 
+/*
+ Then we need to add extentcucumber adapter in testrunner..
+ Then run this testrunner as junit which will generate extent spark html reports under SparkReport
   as per extent.properties.
+  
+  Under test output ,spark report gets generated.
+  Screenshot created under test-output.
 
-* Under test output spark report gets generated.
-* Screenshot created under test-output.
-* 
-* Open spark report folder index.html file
-* Go to the browser and paste the path to open extent html report.
-* 
-* Bug section shows failed assertion.
-* Also we get failed screenshot.
-* 
-* Tags @accounts shows 2 tests were there and both got passed.
+  Open spark report folder index.html file
+  Go to the browser and paste the path to open extent html report.
+ 
+  Bug section shows failed assertion.
+  Also we get failed screenshot.
+ 
+  Tags @accounts shows 2 tests were there and both got passed.
+  All these system environments info comes from extentconfig.xml like user:Naveen, os:Mac.
 
-* All these system environments info comes from extentconfig.xml like user:Naveen, os:Mac.
-* 
-* Title of the report and report name can be changed also from xml file.
+  Title of the report and report name can be changed also from xml file.
   Like Extent and Grassshopper.
-
-* Chart is coming at bottom as we used bottom.
-
-* Theme used is dark. We can use standard also if we need in white colour.
-
-* Now open test output folder , pdf report.
-* Also the failed test details shown in report.
+  Chart is coming at bottom as we used bottom.
+  Theme used is dark. We can use standard also if we need in white colour.
+  Now open test output folder , pdf report.
+  Also the failed test details shown in report.
+ */
 
 package testrunners;
-
 import org.junit.runner.RunWith;
-
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
-
 @RunWith(Cucumber.class)
 @CucumberOptions(
 		features = {"src/test/resources/AppFeatures"},
@@ -778,17 +688,353 @@ import io.cucumber.junit.CucumberOptions;
 		         }
 		
 		)
-
 public class MyTestRunner {
-
 }
 
-=========================
+=============================
+POM.XML comments
+/*
+ * Both accountpage and loginpage features will run in parallel mode
+But the scenarios for eg under login page will not run in parallel.
+Means all above scenarios will run under same browser.
 
-Project flow ends:
+Similarly for accounts page scenarios.
 
-	 */
+So we can say that accountpage and login page both are running on different 
+Browsers but in parallel mode.
+
+
+use browser= chrome inisde config.properties.
+
+So we will execute above in chrome means 
+2 chrome browsers will run 2 features in parallel mode.
+
+We need to add few plugins like surefire, compliler in pom.xml.
+
+Failsafe plugin.
+
+
+Here we need to provide the name of our testrunner.
+
+
+Use parallel methods.
+
+
+Run the project using maven by copying prroject path 
+Then cd to the terminal path.
+
+Do mvn verify.
+
+2 features will run in parallel mode in chrome.
+
+Refresh the project to see extent report.
+
+----------------------------
+Testrunner.java comments
+
+Add timeline plugin for threads in Testrunner.java.
+
+We have 2 features so 2 threads.
+We can use above plugin and see that which thread executed which 
+Feature.
+
+
+Again run the report using junit or mvn verify.
+
+This shows report based on the threads in the cucumber reports.
+
+ * 
+ */
+-------------------------
+
+
+POM.XML
+
+<plugin> <groupId>org.apache.maven.plugins</groupId>
+ <artifactId>maven-failsafe-plugin</artifactId> 
+	<version>3.0.0-M3</version> 
+	<executions> 
+	    <execution> 
+	        <goals> 
+	            <goal>integration-test</goal> 
+	        </goals> 
+	        <configuration> 
+//	        <!-- UNCOMMENT - To add any exclusions if required  -->
+//	        <!-- <excludes> <exclude>**/*IT*.java</exclude> </excludes> -->
+	        <includes> 
+//	          <!--UNCOMMENT BELOW LINE - To execute feature files with a single runner -->
+	          <include>**/MyTestRunner.java</include> 
+	         
+//	          <!--UNCOMMENT BELOW LINE - To execute feature files with multiple runners -->
+//	         <!--  <include>**/*Runner.java</include> -->
 	
-	 
-	
+	        </includes> 
+	        
+//	        <!--UNCOMMENT BELOW 3 LINES - To execute using parallel or combination option -->
+	        <parallel>methods</parallel> 
+	        <threadCount>4</threadCount> 
+	        <perCoreThreadCount>true</perCoreThreadCount> 
+//	        <!--UNCOMMENT BELOW 3 LINES - To execute using forking or combination option -->
+	        
+	        <!--<forkCount>2</forkCount> <reuseForks>true</reuseForks> <reportsDirectory>${project.build.directory}/failsafe-reports_${surefire.forkNumber}</reportsDirectory> -->
+	       </configuration> 
+	    </execution> 
+	</executions> 
+</plugin> 
+
+-------------------------
+
+package testrunners;
+import org.junit.runner.RunWith;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+@RunWith(Cucumber.class)
+@CucumberOptions(
+		features = {"src/test/resources/AppFeatures"},
+		glue = {"stepdefinitions", "AppHooks"},
+		plugin = {"pretty",
+				"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:",
+				"timeline:test-output-thread/"
+							
+		         }
+		
+		)
+public class MyTestRunner {
 }
+
+}
+		 
+------------------------------
+
+Create another feature acc.feature by copying accountspage.feature.
+
+Run again using mvn verify.
+
+3 threads started in parallel mode for running 3 features.
+
+3 threads will then show in cucumber report.
+
+
+to push the local changes to git.
+
+Use 
+
+git status
+
+git add .
+
+git commit -m "added junit parallel flow comments"
+
+git push origin master
+
+This will push the code to github.
+
+
+=================
+
+Cucumber Junit parallel POM changes ends here
+
+----------------
+
+Git full steps:
+	
+Create account in github.
+Click on your profile.
+We can go to settings, public  profile and write about you.
+
+This shows number of repositories created by user.
+
+Now click on new repository.
+
+If we need to share our code to anyone make it public.
+
+Now create some  maven project in eclipse as above.
+
+Go to the properties of the project.
+
+Go to the project location in the terminal using cd project path.
+
+Then use git init.
+Press git init to initialize the project.
+
+This wll create .git file in the project path.
+
+
+do ls-alt to check the files under the path.
+
+Do ls -alt and you can see the .git file created as above . Its hidden file.
+
+
+Now do git remote add origin "DemoRepo.git(github url repository path)"
+	
+This will create connection of remote rep to local git rep.
+
+Do git status. This will show files in red which can be committed.
+
+
+
+Do git add . Which will make all red files and make them ready for commit.
+
+Then do git commit.
+
+git commit -m "added junit parallel flow comments"
+
+In step 4 we can also do git add homepage.java or more files .
+But using git add . Will add all project files for commit.
+
+Git push origin master will give error.
+
+Anyone can pull the code from remote rep using url but no one can push the code to my rep.
+
+So for pushing the code from local to remote rep we have to 1st register ssh key in remote rep.
+
+Ssh key is not required for pulling. Its only required while pushing.
+
+
+Go to account settings.
+
+Click on ssh and gpg keys.
+
+If I need 5 users to push their code to my rep.
+
+Then I need to add 5 ssh keys above.
+
+Give the title of the key.
+
+go to link below:
+
+https://docs.joyent.com/public-cloud/getting-started/ssh-keys/generating-an-ssh-key-manually/manually-generating-your-ssh-key-in-mac-os-x
+
+	To generate SSH keys in macOS, follow these steps:
+
+		Enter the following command in the Terminal window.
+
+		ssh-keygen -t rsa
+
+		Your private key is saved to the id_rsa file in the .ssh directory and is used to verify the public key you use belongs to the same Triton Compute Service account.
+		
+		Open new terminal and paste above command.
+		
+		Enter mac password.
+		
+		Never share your private key with anyone!
+		Your public key is saved to the id_rsa.pub;file and is the key you upload to your Triton Compute Service account. You can save this key to the clipboard by running this:
+
+		pbcopy < ~/.ssh/id_rsa.pub
+		
+		run above command and then paste in texteditor which will paste your public key like below.
+		
+		ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC+TQF6yYGuayGcccXizOqk+z3AltZGtnTGT1xV1cRQ2MDzdwhYjLUGSjxyWPsT
+		LuiHaI5EzkEqFjjV8g/lVAW+dVQ6ifBec4PqXAeQ3MfGcbjTn/hDumikneWCpWHTk8aJ5Eg2mDlRaZhM0YQcUfo4vW1SFDO8v/Z4
+		xLI47glm7nLdRV63M+0b548JIkX9Cdp1YZ5voChv7L3J562+s7tp3F5Kq3ISZigsMC7kHCCKkFwWscIn9T3AXB+uiCA8IplGy0m4E
+		rKKY4EKMCqIWh1y4nGKnGNdLGnUnQGqgFdlhTKCEqmXgA/WQYCghqV18Su/d0vDUKDENtnepQUP5zYjpkSMT0rFQswZv0YsFs3QNJ
+		IL5bBjrFduLPFsRDK+l+rQudgAd7US/nT2iysQjHMbWcs4JJeyh2iPlm+LI8hhY2mpm7F36+AO47oWn4ZCCMNAl2Lv5SgwgXYnhMU
+		YyDI9bWiYsN8j0TrsHZbA0UfgjIXjUKMjIdpSeNgj0HE6d/s= harshchoubey@harshs-MacBook-Pro.local
+
+				After you copy the SSH key to the clipboard, return to your account page.
+				Choose to Import Public Key and paste your SSH key into the Public Key field.
+
+				There are 2 ssh keys above means 2 different users can push the code to above.
+
+				Again do git push and this time code gets pushed to master branch.
+
+				Try laptop password above.
+
+		Sometimes it will give an error again so generate  Personal token as per below link.
+		
+		https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+			
+			
+		
+		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 :personal token og harshchoubey712
+		
+		
+		Personal access tokens (PATs) are an alternative to using passwords for authentication to GitHub when using the GitHub API or the command line.
+		
+		
+		Using a token on the command line
+		Once you have a token, you can enter it instead of your password when performing Git operations over HTTPS.
+
+		For example, on the command line you would enter the following:
+
+		$ git clone https://github.com/username/repo.git
+		Username: your_username
+		Password: your_token
+		
+		
+		Personal access tokens can only be used for HTTPS Git operations. If your repository uses an SSH remote URL, you will need to switch the remote from SSH to HTTPS.
+		
+		
+		Now again try git push 
+		and give token as password.
+		
+		This will push the changes to github.
+		
+		This is how we pushed code using ssh key.
+		
+		Now add 1 more class as above in eclipse.
+		
+		Git status only shows 1 class searchpage. Newly added.
+		
+		Now do git add .
+		Git status.
+		
+		Now commit and push.
+		
+		so everytime if we change anything we can start from git status.
+		
+		
+		-----------
+		
+		Git pull
+		
+		Mkdir javacourse
+		Cd javacourse
+		Now pull changes in above dir.
+		
+		For the 1st time we need to do git clone.
+		
+		git clone https://.git
+			
+		Now we get full project as above inside javacourse folder.
+		
+		To take this code to eclipse.
+
+		Go to import, 
+		General , existing projects.
+		
+		Browse
+		
+		select the project and finish.
+		
+
+       This is  for cloning java project.
+       
+       
+       Now clone maven project.
+       
+       Create ebatest folder .
+       
+       Do git clone.
+       
+       To import maven project use file import maven 
+       
+       Ebaytest imported now.
+       
+       Suppose if we made any changes to the remote rep by committing directly in the repository.
+       
+       We can pull the changes done in remote rep to local eclipse using
+       
+       Now to pull the changes use git pull.
+       
+       git pull origin master.
+       
+       
+       For pull we have to 1st time clone. Its for only 1st time.
+       
+      ==========================
+      
+      
+       
+       
+       
