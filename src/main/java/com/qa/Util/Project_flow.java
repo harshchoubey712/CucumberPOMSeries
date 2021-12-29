@@ -1032,6 +1032,10 @@ https://docs.joyent.com/public-cloud/getting-started/ssh-keys/generating-an-ssh-
        
        For pull we have to 1st time clone. Its for only 1st time.
        
+       Need to check for PULL REQUEST NOW.
+       
+       Again pushing to see changes.
+       
       ==========================
       
       
